@@ -1,0 +1,30 @@
+.token-wrap {
+  display: flex;
+  flex-direction: column;
+  width: 450px;
+  gap: 5px;
+
+  &__header {
+    font-weight: 600;
+    font-size: 18px;
+  }
+}
+
+.save-tokens-btn {
+  width: 100%;
+}
+
+.token-label {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.token-input {
+  width: 300px;
+}
+
+.min-trade-input {
+  width: 50px
+}
