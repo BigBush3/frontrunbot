@@ -22,20 +22,23 @@ const ActionButton = ({
     Emitter.on(EmitterEvents.connectionClosed, () => {
       setClicked(false);
     });
+    Emitter.on(EmitterEvents.networkSwap, () => {
+      setClicked(false);
+    });
     return () => {
       Emitter.off(EmitterEvents.connectionClosed);
+      Emitter.off(EmitterEvents.networkSwap);
     };
-  }, []);
+  }, [clicked]);
   function handleClick() {
-    setClicked(!clicked);
     if (clicked) {
       Emitter.emit(EmitterEvents.unsubscribe);
+      setClicked(!clicked);
       return;
     }
+    setClicked(!clicked);
     onClickEvent();
   }
-  console.log('ready', readyState);
-  console.log(valid);
   return (
     <button
       onClick={() => handleClick()}

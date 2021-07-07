@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import ActionButton from '../ActionButton/ActionButton';
 import Emitter from '../../services/emitter.service';
 import './ActionsSection.styles.scss';
 import { EmitterEvents } from '../../models/internal.interface';
 import { ReadyState } from 'react-use-websocket';
-import { NodeAdresses } from '../../common/models/ws.interface';
 
 interface ActionsSectionProps {
   readyState: ReadyState;

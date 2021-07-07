@@ -1,19 +1,21 @@
-.actions-section {
+.info-section {
   display: flex;
+  width: 250px;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  background-color: #fff;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-top: 40px;
   border-radius: 5px;
+  background-color: #fff;
   padding: 10px;
   -webkit-box-shadow: 8px 10px 20px 2px rgba(121, 121, 121, 0.34); 
   box-shadow: 8px 10px 20px 2px rgba(121, 121, 121, 0.34);
-  height: fit-content;
-  margin-top: 39px;
 
   &__header {
-    font-weight: 600;
+    align-self: center;
     font-size: 18px;
+    font-weight: 600;
+    text-align: center;
   }
 }

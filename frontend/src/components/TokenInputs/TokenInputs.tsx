@@ -3,24 +3,51 @@ import { TokensState } from '../../models/internal.interface';
 import localStorageService from '../../services/localStorage.service';
 import './TokenInputs.styles.scss';
 
-const TokenInputs = () => {
+const TokenInputs = (): JSX.Element => {
   const [tokensState, setTokensState] = useState({} as TokensState);
+  const [allMinTrade, setAllMinTrade] = useState('');
   const inputCount = 33;
 
   useEffect(() => {
     const tokens = localStorageService.getTokensFromStorage();
-    console.log('here');
     setTokensState(tokens);
   }, []);
 
-  function saveTokens() {
-    console.log('state', tokensState);
-    localStorageService.saveTokensToStorage(tokensState);
+  function saveTokens(tokensStateDep?: TokensState) {
+    if (tokensStateDep) {
+      localStorageService.saveTokensToStorage(tokensStateDep);
+    } else {
+      localStorageService.saveTokensToStorage(tokensState);
+    }
+    const newTokens = localStorageService.getTokensFromStorage();
+    setTokensState(newTokens);
+  }
+
+  function setMinTrade() {
+    const newTokenState: TokensState = {};
+    Object.keys(tokensState).forEach((token) => {
+      newTokenState[token] = { minTrade: allMinTrade, address: tokensState[token].address };
+    });
+    setTokensState(newTokenState);
+    saveTokens(newTokenState);
   }
 
   return (
     <div className="token-wrap">
       <div className="token-wrap__header">Token inputs</div>
+      <label style={{ display: 'flex', flexDirection: 'column' }} htmlFor="all-min-trade">
+        Set min trade for all tokens
+        <div>
+          <input
+            value={allMinTrade}
+            onChange={({ target }) => setAllMinTrade(target.value)}
+            name="all-min-trade"
+            id="all-min-trade"
+            type="text"
+          />
+          <button onClick={setMinTrade}>Set</button>
+        </div>
+      </label>
       {Array(inputCount)
         .fill('')
         .map((_, i) => (
@@ -53,7 +80,7 @@ const TokenInputs = () => {
                   }
                 })
               }
-              value={tokensState['token' + i]?.minTrade}
+              value={tokensState['token' + i]?.minTrade || ''}
               type="text"
               name={'min-trade' + i}
               id={'min-trade' + i}

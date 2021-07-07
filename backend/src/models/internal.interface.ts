@@ -1,3 +1,5 @@
+import { ethers } from 'ethers';
+
 export interface SubscriptionTokensHashMap {
   [address: string]: string;
 }
@@ -5,6 +7,15 @@ export interface SubscriptionTokensHashMap {
 export enum TxMethods {
   swapExactETHForTokens = 'swapExactETHForTokens',
   swapETHForExactTokens = 'swapETHForExactTokens',
+}
+
+export interface TokenDetails {
+  name: string;
+  symbol: string;
+}
+
+export interface networkProviderMapping {
+  [network: string]: ethers.providers.WebSocketProvider;
 }
 
 export interface JsonFragmentType {

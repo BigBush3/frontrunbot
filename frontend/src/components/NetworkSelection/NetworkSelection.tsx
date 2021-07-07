@@ -1,15 +1,30 @@
 import React, { useState } from 'react';
+import { SendJsonMessage } from 'react-use-websocket/dist/lib/types';
 import { Networks, NodeAdresses } from '../../common/models/ws.interface';
 import { EmitterEvents } from '../../models/internal.interface';
 import Emitter from '../../services/emitter.service';
+import { sendLastBlockMsg, sendUnsubMessage } from '../../services/ethers.service';
 import './NetworkSelection.styles.scss';
 
-const NetworkSelection = (): JSX.Element => {
-  const [network, setNetwork] = useState('');
+interface NetworkSelectionProps {
+  network: string;
+  setNetwork: (network: string) => void;
+  setNodeAddress: (nodeAddress: string) => void;
+  sendJsonMessage: SendJsonMessage;
+}
 
+const NetworkSelection = ({
+  network,
+  setNetwork,
+  setNodeAddress,
+  sendJsonMessage
+}: NetworkSelectionProps): JSX.Element => {
   function handleNetworkSwap(networkDep: Networks, nodeAddress: NodeAdresses) {
     Emitter.emit(EmitterEvents.networkSwap, [{ network: networkDep, nodeAddress }]);
     setNetwork(networkDep);
+    setNodeAddress(nodeAddress);
+    sendUnsubMessage(sendJsonMessage);
+    sendLastBlockMsg(sendJsonMessage, nodeAddress);
   }
 
   return (

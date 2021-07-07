@@ -6,3 +6,9 @@
   align-items: center;
   gap: 20px;
 }
+
+.row-wrap {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}

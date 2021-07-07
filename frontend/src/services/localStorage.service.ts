@@ -5,7 +5,7 @@ export enum TokensStorage {
   tokens = 'frontrun-tokens'
 }
 
-export const getTokensFromStorage = (): TokensState => {
+const getTokensFromStorage = (): TokensState => {
   const tokens = window.localStorage.getItem(TokensStorage.tokens);
   if (!tokens) {
     window.localStorage.setItem(TokensStorage.tokens, JSON.stringify({}));
@@ -15,7 +15,7 @@ export const getTokensFromStorage = (): TokensState => {
   return parsedTokens;
 };
 
-export const saveTokensToStorage = (tokensState: TokensState) => {
+const saveTokensToStorage = (tokensState: TokensState): void => {
   let validTokens = true;
   Object.keys(tokensState).forEach((key) => {
     if (tokensState[key].address === '') {
@@ -24,8 +24,15 @@ export const saveTokensToStorage = (tokensState: TokensState) => {
     if (tokensState[key]?.address) {
       const isValid = validateToken(tokensState[key].address);
       if (!isValid) {
-        console.error('invalid token');
         validTokens = false;
+      }
+      if (
+        !tokensState[key]?.minTrade ||
+        tokensState[key].minTrade === '' ||
+        +tokensState[key].minTrade < 0 ||
+        isNaN(+tokensState[key].minTrade)
+      ) {
+        tokensState[key].minTrade = '1';
       }
     }
   });

@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ethers } from 'ethers';
-import { Fragment } from 'ethers/lib/utils';
-import { JsonFragment } from 'src/models/internal.interface';
+import {
+  LastBlockPayload,
+  WsAction,
+  WsEvent,
+} from 'src/common/models/ws.interface';
+import { TokenDetails } from 'src/models/internal.interface';
 
 @Injectable()
 export class UtilityService {
@@ -10,32 +14,49 @@ export class UtilityService {
     return provider;
   }
 
-  parseTransaction(
-    txInputData: string,
-    contractAbi: string | ReadonlyArray<Fragment | JsonFragment | string>,
-  ) {
-    const parser = new ethers.utils.Interface(contractAbi);
-    const decodedTx = parser.parseTransaction({ data: txInputData });
-    return decodedTx;
+  async sendLastBlockMessage(blockNumber: number, client: WebSocket) {
+    const lastBlockMsg: WsEvent<LastBlockPayload> = {
+      action: WsAction.lastBlock,
+      payload: {
+        blockNumber,
+      },
+    };
+    client.send(JSON.stringify(lastBlockMsg));
   }
 
-  async getTokenSymbol(
+  async getLastBlock(provider: ethers.providers.WebSocketProvider) {
+    const lastBlock = await provider.getBlockNumber();
+    return lastBlock;
+  }
+
+  async getLastBlockFromUrl(wsUrl: string) {
+    const provider = this.getProvider(wsUrl);
+    const lastBlock = await provider.getBlockNumber();
+    return lastBlock;
+  }
+
+  async getTokenDetails(
     tokenAddress: string,
     provider: ethers.providers.WebSocketProvider,
-  ): Promise<string> {
-    const partialAbi = ['function symbol() view returns (string)'];
+  ): Promise<TokenDetails> {
+    const partialAbi = [
+      'function symbol() view returns (string)',
+      'function name() view returns (string)',
+    ];
     const tokenContract = new ethers.Contract(
       tokenAddress,
       partialAbi,
       provider,
     );
     try {
-      const symbol = await tokenContract.symbol();
-      return symbol;
+      const symbol: string = await tokenContract.symbol();
+      const name: string = await tokenContract.name();
+      return { symbol, name };
     } catch (error) {
-      console.log('in that error');
-      console.log(error);
-      return 'smart contract error';
+      return {
+        name: 'SC error',
+        symbol: 'SC error',
+      };
     }
   }
 }

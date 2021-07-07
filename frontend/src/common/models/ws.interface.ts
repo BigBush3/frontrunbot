@@ -1,13 +1,28 @@
 export enum WsAction {
   subscribeToTokens = 'subscribe-to-tokens',
-  unsubscribe = 'unsubscribe'
+  lastBlock = 'last-block',
+  unsubscribe = 'unsubscribe',
+  swapDetails = 'swapDetails',
+  success = 'success',
+  info = 'info',
+  error = 'error'
+}
+
+export interface LastBlockPayload {
+  blockNumber: number;
+}
+
+export interface NotificationPayload {
+  message: string;
 }
 
 export enum NodeAdresses {
-  ethRopsten = 'wss://eth-ropsten.ws.alchemyapi.io/v2/6pTy9NyxsKH-8P8yA3HgiMdBmkilViYJ',
-  ethMainnet = 'wss://eth-mainnet.ws.alchemyapi.io/v2/1rhRwSqT62V6PYgndNcawISXCvWSUsM5',
-  reserveMainnet = 'wss://mainnet.infura.io/ws/v3/19e776b310ca4548bb1b63faaa42f93a',
-  reserveRopsten = 'wss://ropsten.infura.io/ws/v3/19e776b310ca4548bb1b63faaa42f93a'
+  //dev
+  // ethMainnet = 'wss://mainnet.infura.io/ws/v3/19e776b310ca4548bb1b63faaa42f93a',
+  // ethRopsten = 'wss://ropsten.infura.io/ws/v3/19e776b310ca4548bb1b63faaa42f93a'
+  // prod
+  ethMainnet = 'ws://0.0.0.0:3334',
+  ethRopsten = 'wss://ropsten.infura.io/ws/v3/157e8949dfa84e87a5ce1b468ec04617'
 }
 
 export enum Networks {
@@ -27,4 +42,13 @@ export interface SubscribeTokensPayload {
 
 export interface SubscriptionTokensHashMap {
   [address: string]: string;
+}
+
+export interface SwapDetails {
+  txHash: string;
+  pair: string;
+  etherSwapped: string;
+  method: string;
+  time: string;
+  pairAddresses: string;
 }

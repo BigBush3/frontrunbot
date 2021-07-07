@@ -9,5 +9,6 @@ export enum EmitterEvents {
   unsubscribe = 'unsubscribe',
   subscribeToTokens = 'subscribeToTokens',
   networkSwap = 'networkSwap',
-  connectionClosed = 'connectionClosed'
+  connectionClosed = 'connectionClosed',
+  tokenSwapDetails = 'tokenSwapDetails'
 }
