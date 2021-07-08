@@ -1,11 +1,19 @@
+import { TokensState } from '../../models/internal.interface';
+
 export enum WsAction {
   subscribeToTokens = 'subscribe-to-tokens',
   lastBlock = 'last-block',
+  tokenSymbols = 'token-symbols',
   unsubscribe = 'unsubscribe',
   swapDetails = 'swapDetails',
   success = 'success',
   info = 'info',
   error = 'error'
+}
+
+export interface TokenSymbolsPayload {
+  tokenState: TokensState;
+  wsUrl: string;
 }
 
 export interface LastBlockPayload {

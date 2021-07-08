@@ -2,6 +2,8 @@ import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import { SendJsonMessage } from 'react-use-websocket/dist/lib/types';
 import { WsAction, WsEvent } from '../common/models/ws.interface';
+import { TokensState } from '../models/internal.interface';
+import { TokenSymbolsPayload } from '../common/models/ws.interface';
 
 export const validateToken = (tokenAddress: string): boolean => {
   try {
@@ -35,4 +37,19 @@ export const sendLastBlockMsg = (sendJsonMessage: SendJsonMessage, wsUrl: string
     }
   };
   sendJsonMessage(lastBlockMsg);
+};
+
+export const sendTokenSymbolsMsg = (
+  sendJsonMessage: SendJsonMessage,
+  wsUrl: string,
+  tokenState: TokensState
+): void => {
+  const tokenSymbolsMsg: WsEvent<TokenSymbolsPayload> = {
+    action: WsAction.tokenSymbols,
+    payload: {
+      tokenState,
+      wsUrl
+    }
+  };
+  sendJsonMessage(tokenSymbolsMsg);
 };

@@ -8,6 +8,7 @@ interface SettingsContainerProps {
   open: boolean;
   network: string;
   setNetwork: (network: string) => void;
+  nodeAddress: string;
   setNodeAddress: (nodeAddress: string) => void;
   sendJsonMessage: SendJsonMessage;
 }
@@ -17,11 +18,12 @@ const SettingsContainer = ({
   network,
   setNetwork,
   setNodeAddress,
-  sendJsonMessage
+  sendJsonMessage,
+  nodeAddress
 }: SettingsContainerProps): JSX.Element => {
   return (
     <div className={open ? 'settings-container' : 'settings-container settings-container__hidden'}>
-      <TokenInputs />
+      <TokenInputs nodeAddress={nodeAddress} sendJsonMessage={sendJsonMessage} />
       <NetworkSelection
         sendJsonMessage={sendJsonMessage}
         setNodeAddress={setNodeAddress}

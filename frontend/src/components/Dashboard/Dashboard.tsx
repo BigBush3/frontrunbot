@@ -47,6 +47,10 @@ const Dashboard = (): JSX.Element => {
           case WsAction.lastBlock:
             setLastBlock(message.payload.blockNumber);
             break;
+          case WsAction.tokenSymbols:
+            console.log('got', message.payload);
+            Emitter.emit(EmitterEvents.tokenSymbols, [message.payload.tokenState]);
+            break;
           case WsAction.success:
             toast.success(message.payload.message);
             break;
@@ -119,6 +123,7 @@ const Dashboard = (): JSX.Element => {
       <SettingsSection
         sendJsonMessage={sendJsonMessage}
         setNodeAddress={setNodeAddress}
+        nodeAddress={nodeAddress}
         open={open}
         setOpen={setOpen}
         network={network}

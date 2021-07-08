@@ -17,9 +17,14 @@ export class TransactionService {
     txInputData: string,
     contractAbi: string | ReadonlyArray<Fragment | JsonFragment | string>,
   ) {
-    const parser = new ethers.utils.Interface(contractAbi);
-    const decodedTx = parser.parseTransaction({ data: txInputData });
-    return decodedTx;
+    try {
+      const parser = new ethers.utils.Interface(contractAbi);
+      const decodedTx = parser.parseTransaction({ data: txInputData });
+      return decodedTx;
+    } catch (error) {
+      console.error('ERROR PARSING TX', error);
+      return undefined;
+    }
   }
 
   async getBigSwapTx(
@@ -31,7 +36,7 @@ export class TransactionService {
     const tx = await provider.getTransaction(txHash);
     if (tx && tx?.to && tx?.to === Routers.uniswapV2) {
       const parsedTx = this.parseTransaction(tx.data, uniswapV2abi);
-      if (parsedTx.name === TxMethods.swapExactETHForTokens) {
+      if (parsedTx?.name === TxMethods.swapExactETHForTokens) {
         const etherSwapped = ethers.utils.formatEther(tx.value);
         const tokenA = parsedTx.args.path[0];
         const tokenB = parsedTx.args.path[1];
@@ -63,7 +68,7 @@ export class TransactionService {
             );
             // remove
             if (+etherSwapped >= +tokenSubs[tokenB.toLowerCase()]) {
-              // console.log('***^^^^^^BIG SWAP^^^^^^***');
+              console.log('***^^^^^^BIG SWAP^^^^^^***');
               return tx;
             }
           }
@@ -80,8 +85,8 @@ export class TransactionService {
     provider: ethers.providers.WebSocketProvider,
   ): Promise<SwapDetails> {
     const parsedTx = this.parseTransaction(tx.data, uniswapV2abi);
-    const tokenA = parsedTx.args.path[0];
-    const tokenB = parsedTx.args.path[1];
+    const tokenA = parsedTx?.args.path[0];
+    const tokenB = parsedTx?.args.path[1];
     const pairAddresses = `${tokenA}-${tokenB}`;
     const etherSwapped = ethers.utils.formatEther(tx.value);
     const tokenADetails = await this.utilityService.getTokenDetails(
@@ -98,7 +103,7 @@ export class TransactionService {
       time: new Date().toLocaleString(),
       pair,
       etherSwapped,
-      method: parsedTx.name,
+      method: parsedTx?.name,
       pairAddresses,
     };
     return swapDetails;

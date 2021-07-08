@@ -22,7 +22,7 @@ export class SubscriptionService {
       address.toLowerCase(),
     );
     provider.on('pending', async (txHash) => {
-      console.log('recievng data', txHash);
+      // console.log('recievng data', txHash);
       const bigSwapTx = await this.transactionService.getBigSwapTx(
         txHash,
         provider,

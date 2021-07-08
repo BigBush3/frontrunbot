@@ -1,11 +1,29 @@
+export interface TokensState {
+  [token: string]: {
+    address: string;
+    minTrade: string;
+    symbol: string;
+  };
+}
+
+export interface TokensStatePayload {
+  tokenState: TokensState;
+}
+
 export enum WsAction {
   subscribeToTokens = 'subscribe-to-tokens',
   lastBlock = 'last-block',
+  tokenSymbols = 'token-symbols',
   unsubscribe = 'unsubscribe',
   swapDetails = 'swapDetails',
   success = 'success',
   info = 'info',
   error = 'error',
+}
+
+export interface TokenSymbolsPayload {
+  tokenState: TokensState;
+  wsUrl: string;
 }
 
 export interface NotificationPayload {

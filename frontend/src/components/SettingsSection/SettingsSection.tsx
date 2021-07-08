@@ -10,6 +10,7 @@ interface SettingsSectionProps {
   setOpen: (open: boolean) => void;
   setNodeAddress: (nodeAddress: string) => void;
   sendJsonMessage: SendJsonMessage;
+  nodeAddress: string;
 }
 
 const SettingsSection = ({
@@ -18,7 +19,8 @@ const SettingsSection = ({
   open,
   setOpen,
   setNodeAddress,
-  sendJsonMessage
+  sendJsonMessage,
+  nodeAddress
 }: SettingsSectionProps): JSX.Element => {
   return (
     <div className="settings-wrap">
@@ -29,6 +31,7 @@ const SettingsSection = ({
         <SettingsContainer
           sendJsonMessage={sendJsonMessage}
           setNodeAddress={setNodeAddress}
+          nodeAddress={nodeAddress}
           network={network}
           setNetwork={setNetwork}
           open={open}

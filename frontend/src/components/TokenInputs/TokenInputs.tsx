@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from 'react';
+import { SendJsonMessage } from 'react-use-websocket/dist/lib/types';
+import Emitter from '../../services/emitter.service';
+import { EmitterEvents } from '../../models/internal.interface';
 import { TokensState } from '../../models/internal.interface';
+import { sendTokenSymbolsMsg } from '../../services/ethers.service';
 import localStorageService from '../../services/localStorage.service';
 import './TokenInputs.styles.scss';
 
-const TokenInputs = (): JSX.Element => {
+interface TokenInputsProps {
+  sendJsonMessage: SendJsonMessage;
+  nodeAddress: string;
+}
+
+const TokenInputs = ({ sendJsonMessage, nodeAddress }: TokenInputsProps): JSX.Element => {
   const [tokensState, setTokensState] = useState({} as TokensState);
   const [allMinTrade, setAllMinTrade] = useState('');
   const inputCount = 33;
@@ -11,6 +20,17 @@ const TokenInputs = (): JSX.Element => {
   useEffect(() => {
     const tokens = localStorageService.getTokensFromStorage();
     setTokensState(tokens);
+  }, []);
+
+  useEffect(function bindEventEmitters() {
+    Emitter.on(EmitterEvents.tokenSymbols, (args) => {
+      const newTokenState: TokensState = args[0];
+      setTokensState(newTokenState);
+      localStorageService.saveTokensToStorage(newTokenState);
+    });
+    return () => {
+      Emitter.off(EmitterEvents.tokenSymbols);
+    };
   }, []);
 
   function saveTokens(tokensStateDep?: TokensState) {
@@ -21,12 +41,13 @@ const TokenInputs = (): JSX.Element => {
     }
     const newTokens = localStorageService.getTokensFromStorage();
     setTokensState(newTokens);
+    sendTokenSymbolsMsg(sendJsonMessage, nodeAddress, tokensStateDep || tokensState);
   }
 
   function setMinTrade() {
     const newTokenState: TokensState = {};
     Object.keys(tokensState).forEach((token) => {
-      newTokenState[token] = { minTrade: allMinTrade, address: tokensState[token].address };
+      newTokenState[token] = { ...tokensState[token], minTrade: allMinTrade };
     });
     setTokensState(newTokenState);
     saveTokens(newTokenState);
@@ -36,7 +57,7 @@ const TokenInputs = (): JSX.Element => {
     <div className="token-wrap">
       <div className="token-wrap__header">Token inputs</div>
       <label style={{ display: 'flex', flexDirection: 'column' }} htmlFor="all-min-trade">
-        Set min trade for all tokens
+        Set min trade for all tokens in ether
         <div>
           <input
             value={allMinTrade}
@@ -45,7 +66,12 @@ const TokenInputs = (): JSX.Element => {
             id="all-min-trade"
             type="text"
           />
-          <button onClick={setMinTrade}>Set</button>
+          <button
+            disabled={nodeAddress.length === 0}
+            className="save-tokens-btn__alt"
+            onClick={setMinTrade}>
+            Set
+          </button>
         </div>
       </label>
       {Array(inputCount)
@@ -60,7 +86,8 @@ const TokenInputs = (): JSX.Element => {
                   ...tokensState,
                   ['token' + i]: {
                     address: target.value,
-                    minTrade: tokensState['token' + i]?.minTrade || ''
+                    minTrade: tokensState['token' + i]?.minTrade || '',
+                    symbol: tokensState['token' + i]?.symbol || ''
                   }
                 })
               }
@@ -76,7 +103,8 @@ const TokenInputs = (): JSX.Element => {
                   ...tokensState,
                   ['token' + i]: {
                     minTrade: target.value,
-                    address: tokensState['token' + i]?.address || ''
+                    address: tokensState['token' + i]?.address || '',
+                    symbol: tokensState['token' + i]?.symbol || ''
                   }
                 })
               }
@@ -85,9 +113,13 @@ const TokenInputs = (): JSX.Element => {
               name={'min-trade' + i}
               id={'min-trade' + i}
             />
+            {tokensState['token' + i]?.symbol || ''}
           </label>
         ))}
-      <button onClick={() => saveTokens()} className="save-tokens-btn">
+      <button
+        disabled={nodeAddress.length === 0}
+        onClick={() => saveTokens()}
+        className="save-tokens-btn">
         Save
       </button>
     </div>

@@ -1,7 +1,7 @@
 .token-wrap {
   display: flex;
   flex-direction: column;
-  width: 450px;
+  width: 480px;
   gap: 5px;
 
   &__header {
@@ -11,14 +11,43 @@
 }
 
 .save-tokens-btn {
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: 12px;
+  border-radius: 5px;
+  border: none;
+  background-color: #03045e;
+  cursor: pointer;
+  color: #fff;
+  width: 150px;
+  height: 50px;
+  outline: none;
   width: 100%;
+
+  &:hover {
+    background-color: #080bb9;
+  }
+
+  &:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+  }
+
+  &__alt {
+    @extend .save-tokens-btn;
+    width: 60px;
+    height: 25px;
+    padding: 0;
+    margin-left: 10px;
+  }
 }
 
 .token-label {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 5px;
 }
 
 .token-input {

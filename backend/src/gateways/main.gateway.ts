@@ -58,7 +58,18 @@ export class MainGateway implements OnGatewayInit, OnGatewayConnection {
             this.provider,
           );
           this.subscriptionService.subscribeToBlocks(this.provider, client);
+
+          this.provider.on('error', (err) => {
+            console.error('PROVIDER ERROR', err);
+          });
           break;
+        case WsAction.tokenSymbols:
+          const newTokenState =
+            await this.utilityService.addTokenSymbolsToState(
+              message.payload.wsUrl,
+              message.payload.tokenState,
+            );
+          this.utilityService.sendTokenStateMessage(newTokenState, client);
         case WsAction.lastBlock:
           const blockNumber = await this.utilityService.getLastBlockFromUrl(
             message.payload.wsUrl,
